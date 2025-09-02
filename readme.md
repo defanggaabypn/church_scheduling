@@ -1,6 +1,6 @@
-# Sistem Manajemen Pemesanan dan Penjadwalan
+# Aplikasi Penjadwalan Penggunaan Gedung Gereja Baptis Syalom Karor
 
-Sistem manajemen pemesanan dan penjadwalan berbasis web dengan optimasi jadwal menggunakan algoritma genetika.
+Sistem manajemen penjadwalan penggunaan gedung gereja dengan optimasi jadwal menggunakan algoritma genetika.
 
 ## Struktur Proyek
 ```
@@ -73,15 +73,39 @@ Sistem manajemen pemesanan dan penjadwalan berbasis web dengan optimasi jadwal m
 
 ## Deskripsi
 
-Aplikasi ini adalah sistem manajemen pemesanan dan penjadwalan yang dilengkapi dengan fitur optimasi jadwal menggunakan algoritma genetika. Sistem ini memiliki dua jenis pengguna utama: admin dan pengguna biasa.
+Aplikasi Penjadwalan Penggunaan Gedung Gereja Baptis Syalom Karor adalah sistem berbasis web yang dikembangkan untuk mempermudah proses penjadwalan penggunaan gedung gereja. Dengan menerapkan algoritma genetika, aplikasi ini dapat mengoptimalkan jadwal kegiatan untuk meminimalkan konflik dan memastikan penggunaan gedung yang efisien.
 
 ### Fitur Utama
 
-- Autentikasi: Sistem login dan registrasi pengguna
-- Manajemen Pengguna: Admin dapat mengelola data pengguna
-- Pemesanan: Pengguna dapat membuat, melihat, dan mengelola pemesanan
-- Penjadwalan: Sistem penjadwalan dengan tampilan kalender
-- Optimasi Jadwal: Menggunakan algoritma genetika untuk mengoptimalkan jadwal
+- **Autentikasi**: Sistem login dan registrasi pengguna
+- **Manajemen Pengguna**: Admin dapat mengelola data pengguna
+- **Booking Kegiatan**: Jemaat dapat membuat, melihat, dan mengelola pemesanan penggunaan gedung
+- **Penjadwalan**: Sistem penjadwalan dengan tampilan kalender
+- **Optimasi Jadwal**: Menggunakan algoritma genetika untuk mengoptimalkan jadwal
+- **Notifikasi**: Pemberitahuan untuk status booking
+
+## Ketentuan Penggunaan Gedung Gereja
+
+### 1. Permintaan Kegiatan
+Permintaan kegiatan tidak dapat diajukan untuk ibadah dan kegiatan yang sudah memiliki jadwal tetap setiap minggunya, yaitu:
+
+- **Kegiatan Belajar Mengajar TK & PAUD**  
+  Hari: Senin – Jumat  
+  Pukul: 08.00 – 12.00 WITA
+
+- **Ibadah Doa**  
+  Hari: Sabtu  
+  Pukul: 18.00 WITA – Selesai
+
+- **Ibadah Minggu Pagi**  
+  Hari: Minggu  
+  Pukul: 09.30 WITA – Selesai
+
+### 2. Pengajuan Permintaan
+Permintaan kegiatan wajib diajukan minimal 1 minggu sebelum kegiatan berlangsung.
+
+### 3. Jadwal Bertabrakan
+Jika ada jadwal yang bertabrakan, gedung gereja akan digunakan untuk kegiatan yang pertama kali mengajukan permohonan penggunaan gedung.
 
 ## Algoritma Genetika untuk Optimasi Jadwal
 
@@ -89,18 +113,18 @@ Sistem ini menggunakan algoritma genetika untuk mengoptimalkan jadwal pemesanan 
 
 ### Komponen Utama Algoritma
 
-- Populasi: Kumpulan kromosom (solusi potensial) dengan ukuran default 50
-- Kromosom: Representasi jadwal dalam bentuk array gen yang mengkodekan:
+- **Populasi**: Kumpulan kromosom (solusi potensial) dengan ukuran default 50
+- **Kromosom**: Representasi jadwal dalam bentuk array gen yang mengkodekan:
   - Gen include/exclude → Menentukan apakah booking dimasukkan (1) atau tidak (0)
   - Gen slot waktu → Menentukan slot waktu yang digunakan (0 = waktu asli, 1+ = slot alternatif)
-- Fitness Function: Mengevaluasi kualitas jadwal berdasarkan:
+- **Fitness Function**: Mengevaluasi kualitas jadwal berdasarkan:
   - Jumlah booking yang berhasil dijadwalkan
   - Penalti untuk konflik jadwal
   - Penalti kecil untuk penggunaan slot waktu alternatif
-- Seleksi: Tournament selection
-- Crossover: 0.8
-- Mutasi: 0.2
-- Elitisme: 5 kromosom terbaik disimpan setiap generasi
+- **Seleksi**: Tournament selection
+- **Crossover**: 0.8
+- **Mutasi**: 0.2
+- **Elitisme**: 5 kromosom terbaik disimpan setiap generasi
 
 ### Fitur Khusus
 
@@ -137,20 +161,22 @@ Sistem ini menggunakan algoritma genetika untuk mengoptimalkan jadwal pemesanan 
 
 ## Instalasi
 
-    # 1. Clone repo
-    git clone https://github.com/defanggaabypn/church_scheduling.git
+```bash
+# 1. Clone repo
+git clone https://github.com/defanggaabypn/church_scheduling.git
 
-    # 2. Import database
-    mysql -u username -p nama_database < Presenting.sql
+# 2. Import database
+mysql -u username -p nama_database < Presenting.sql
 
-    # 3. Konfigurasi koneksi di config/database.php
+# 3. Konfigurasi koneksi di config/database.php
 
-    # 4. Atur permission
-    chmod -R 755 .
-    chmod -R 777 assets/img
+# 4. Atur permission
+chmod -R 755 .
+chmod -R 777 assets/img
 
-    # 5. Akses via browser
-    http://localhost/church_scheduling
+# 5. Akses via browser
+http://localhost/church_scheduling
+```
 
 ## Struktur Database
 
