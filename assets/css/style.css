@@ -1,0 +1,110 @@
+/* Custom styles for the application */
+
+body {
+    padding-bottom: 20px;
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    margin-bottom: 20px;
+}
+
+.jumbotron {
+    background-color: #e9ecef;
+    padding: 2rem;
+}
+
+/* Calendar styles */
+#calendar {
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.fc-event {
+    cursor: pointer;
+}
+
+/* Card styles */
+.card {
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+/* Button styles */
+.btn {
+    border-radius: 4px;
+}
+
+/* Form styles */
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Table styles */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* Badge styles */
+.badge {
+    font-size: 90%;
+}
+
+/* Footer styles */
+footer {
+    margin-top: 50px;
+}
+
+/* Activity type colors */
+.activity-pemuda {
+    background-color: #007bff !important;
+}
+
+.activity-pria {
+    background-color: #6f42c1 !important;
+}
+
+.activity-wanita {
+    background-color: #e83e8c !important;
+}
+
+.activity-sekolah_minggu {
+    background-color: #28a745 !important;
+}
+
+.activity-rayon {
+    background-color: #17a2b8 !important;
+}
+
+.activity-tk_paud {
+    background-color: #ffc107 !important;
+}
+
+.activity-doa {
+    background-color: #fd7e14 !important;
+}
+
+.activity-minggu {
+    background-color: #dc3545 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .jumbotron h1 {
+        font-size: 2rem;
+    }
+    
+    .display-4 {
+        font-size: 2.5rem;
+    }
+}
