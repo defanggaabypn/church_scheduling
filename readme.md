@@ -3,7 +3,7 @@
 Sistem manajemen pemesanan dan penjadwalan berbasis web dengan optimasi jadwal menggunakan algoritma genetika.
 
 ## Struktur Proyek
-
+```
 ├── .htaccess.txt
 ├── index.php                  # File utama aplikasi
 ├── pengujian.php              # File untuk pengujian
@@ -69,7 +69,7 @@ Sistem manajemen pemesanan dan penjadwalan berbasis web dengan optimasi jadwal m
     │
     └── user/                  # Tampilan pengguna
         └── dashboard.php
-
+```
 
 ## Deskripsi
 
