@@ -26,7 +26,7 @@ function addTestBookings($conn) {
     $test_bookings = [
         // Booking yang bertabrakan dengan jadwal tetap TK & PAUD
         [
-            'user_id' => 6,
+            'user_id' => 9,
             'activity_type' => 'pemuda',
             'title' => 'Test Booking 1 - Konflik dengan TK PAUD',
             'description' => 'Booking ini akan bertabrakan dengan jadwal TK & PAUD',
@@ -37,7 +37,7 @@ function addTestBookings($conn) {
         ],
         // Booking yang bertabrakan dengan Ibadah Minggu
         [
-            'user_id' => 6,
+            'user_id' => 9,
             'activity_type' => 'pemuda',
             'title' => 'Test Booking 2 - Konflik dengan Ibadah Minggu',
             'description' => 'Booking ini akan bertabrakan dengan Ibadah Minggu',
@@ -92,7 +92,7 @@ function addTestBookings($conn) {
         ],
         // Booking yang bertabrakan dengan booking lain yang juga pending
         [
-            'user_id' => 6,
+            'user_id' => 9,
             'activity_type' => 'pria',
             'title' => 'Test Booking 7 - Konflik dengan Booking Pending',
             'description' => 'Booking ini akan bertabrakan dengan booking pending lainnya',
@@ -125,7 +125,7 @@ function addTestBookings($conn) {
         ],
         // Booking yang membutuhkan slot waktu alternatif
         [
-            'user_id' => 6,
+            'user_id' => 9,
             'activity_type' => 'sekolah_minggu',
             'title' => 'Test Booking 10 - Membutuhkan Slot Alternatif',
             'description' => 'Booking ini membutuhkan slot waktu alternatif',
