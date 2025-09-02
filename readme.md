@@ -40,35 +40,36 @@ Sistem manajemen pemesanan dan penjadwalan berbasis web dengan optimasi jadwal m
 │   └── User.php               # Model pengguna
 │
 └── views/                     # Tampilan aplikasi
-├── index.php              # Halaman utama
-│
-├── admin/                 # Tampilan admin
-│   ├── add_user.php
-│   ├── dashboard.php
-│   ├── edit_user.php
-│   ├── manage_bookings.php
-│   └── manage_users.php
-│
-├── auth/                  # Tampilan autentikasi
-│   ├── login.php
-│   └── register.php
-│
-├── booking/               # Tampilan pemesanan
-│   ├── create.php
-│   ├── list.php
-│   └── view.php
-│
-├── schedule/              # Tampilan jadwal
-│   ├── calendar.php
-│   └── optimize.php
-│
-├── templates/             # Template halaman
-│   ├── footer.php
-│   ├── header.php
-│   └── sidebar.php
-│
-└── user/                  # Tampilan pengguna
-└── dashboard.php
+    ├── index.php              # Halaman utama
+    │
+    ├── admin/                 # Tampilan admin
+    │   ├── add_user.php
+    │   ├── dashboard.php
+    │   ├── edit_user.php
+    │   ├── manage_bookings.php
+    │   └── manage_users.php
+    │
+    ├── auth/                  # Tampilan autentikasi
+    │   ├── login.php
+    │   └── register.php
+    │
+    ├── booking/               # Tampilan pemesanan
+    │   ├── create.php
+    │   ├── list.php
+    │   └── view.php
+    │
+    ├── schedule/              # Tampilan jadwal
+    │   ├── calendar.php
+    │   └── optimize.php
+    │
+    ├── templates/             # Template halaman
+    │   ├── footer.php
+    │   ├── header.php
+    │   └── sidebar.php
+    │
+    └── user/                  # Tampilan pengguna
+        └── dashboard.php
+
 
 ## Deskripsi
 
