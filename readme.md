@@ -4,73 +4,71 @@ Sistem manajemen pemesanan dan penjadwalan berbasis web dengan optimasi jadwal m
 
 ## Struktur Proyek
 
-    C:.
-    │   .htaccess.txt
-    │   index.php                  # File utama aplikasi
-    │   pengujian.php              # File untuk pengujian
-    │   Presenting.sql             # File SQL database
-    │
-    ├───assets                     # Aset statis aplikasi
-    │   ├───css
-    │   │       style.css
-    │   │
-    │   ├───img
-    │   └───js
-    │           script.js
-    │
-    ├───config                     # Konfigurasi aplikasi
-    │       config.php             # Konfigurasi umum
-    │       database.php           # Konfigurasi database
-    │
-    ├───controllers                # Controller aplikasi
-    │       AuthController.php     # Kontrol autentikasi
-    │       BookingController.php  # Kontrol pemesanan
-    │       DashboardController.php# Kontrol dashboard
-    │       ScheduleController.php # Kontrol jadwal
-    │       UserController.php     # Kontrol pengguna
-    │
-    ├───helpers                    # Helper functions
-    │       notification_helper.php# Helper notifikasi
-    │       session_helper.php     # Helper session
-    │       url_helper.php         # Helper URL
-    │       validation_helper.php  # Helper validasi
-    │
-    ├───models                     # Model data
-    │       Booking.php            # Model pemesanan
-    │       GeneticAlgorithm.php   # Model algoritma genetika
-    │       Schedule.php           # Model jadwal
-    │       User.php               # Model pengguna
-    │
-    └───views                      # Tampilan aplikasi
-    │   index.php                  # Halaman utama
-    │
-    ├───admin                      # Tampilan admin
-    │       add_user.php
-    │       dashboard.php
-    │       edit_user.php
-    │       manage_bookings.php
-    │       manage_users.php
-    │
-    ├───auth                       # Tampilan autentikasi
-    │       login.php
-    │       register.php
-    │
-    ├───booking                    # Tampilan pemesanan
-    │       create.php
-    │       list.php
-    │       view.php
-    │
-    ├───schedule                   # Tampilan jadwal
-    │       calendar.php
-    │       optimize.php
-    │
-    ├───templates                  # Template halaman
-    │       footer.php
-    │       header.php
-    │       sidebar.php
-    │
-    └───user                       # Tampilan pengguna
-            dashboard.php
+├── .htaccess.txt
+├── index.php                  # File utama aplikasi
+├── pengujian.php              # File untuk pengujian
+├── Presenting.sql             # File SQL database
+│
+├── assets/                    # Aset statis aplikasi
+│   ├── css/
+│   │   └── style.css
+│   ├── img/
+│   └── js/
+│       └── script.js
+│
+├── config/                    # Konfigurasi aplikasi
+│   ├── config.php             # Konfigurasi umum
+│   └── database.php           # Konfigurasi database
+│
+├── controllers/               # Controller aplikasi
+│   ├── AuthController.php     # Kontrol autentikasi
+│   ├── BookingController.php  # Kontrol pemesanan
+│   ├── DashboardController.php# Kontrol dashboard
+│   ├── ScheduleController.php # Kontrol jadwal
+│   └── UserController.php     # Kontrol pengguna
+│
+├── helpers/                   # Helper functions
+│   ├── notification_helper.php# Helper notifikasi
+│   ├── session_helper.php     # Helper session
+│   ├── url_helper.php         # Helper URL
+│   └── validation_helper.php  # Helper validasi
+│
+├── models/                    # Model data
+│   ├── Booking.php            # Model pemesanan
+│   ├── GeneticAlgorithm.php   # Model algoritma genetika
+│   ├── Schedule.php           # Model jadwal
+│   └── User.php               # Model pengguna
+│
+└── views/                     # Tampilan aplikasi
+├── index.php              # Halaman utama
+│
+├── admin/                 # Tampilan admin
+│   ├── add_user.php
+│   ├── dashboard.php
+│   ├── edit_user.php
+│   ├── manage_bookings.php
+│   └── manage_users.php
+│
+├── auth/                  # Tampilan autentikasi
+│   ├── login.php
+│   └── register.php
+│
+├── booking/               # Tampilan pemesanan
+│   ├── create.php
+│   ├── list.php
+│   └── view.php
+│
+├── schedule/              # Tampilan jadwal
+│   ├── calendar.php
+│   └── optimize.php
+│
+├── templates/             # Template halaman
+│   ├── footer.php
+│   ├── header.php
+│   └── sidebar.php
+│
+└── user/                  # Tampilan pengguna
+└── dashboard.php
 
 ## Deskripsi
 
