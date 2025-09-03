@@ -8,7 +8,7 @@
                     <p>Aplikasi Penjadwalan Penggunaan Gedung Gereja dengan Algoritma Genetika</p>
                 </div>
                 <div class="col-md-6 text-md-right">
-                    <p>&copy; <?php echo date('Y'); ?> - Semua Hak Dilindungi</p>
+                    <p>&copy; <?php echo date('Y'); ?> - </p>
                 </div>
             </div>
         </div>
