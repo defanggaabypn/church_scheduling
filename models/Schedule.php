@@ -87,12 +87,22 @@ class Schedule {
     }
     
     // Check for schedule conflicts
-    public function check_conflicts($date, $start_time, $end_time) {
-        $query = 'SELECT * FROM ' . $this->table . ' 
-                  WHERE date = :date AND 
-                  ((start_time <= :start_time AND end_time > :start_time) OR 
-                   (start_time < :end_time AND end_time >= :end_time) OR 
-                   (start_time >= :start_time AND end_time <= :end_time))';
+    public function check_conflicts($date, $start_time, $end_time, $is_urgent = false) {
+        // Jika urgent, hanya cek konflik dengan jadwal non-tetap
+        if ($is_urgent) {
+            $query = 'SELECT * FROM ' . $this->table . ' 
+                      WHERE date = :date AND is_fixed = 0 AND
+                      ((start_time <= :start_time AND end_time > :start_time) OR 
+                       (start_time < :end_time AND end_time >= :end_time) OR 
+                       (start_time >= :start_time AND end_time <= :end_time))';
+        } else {
+            // Query original untuk non-urgent
+            $query = 'SELECT * FROM ' . $this->table . ' 
+                      WHERE date = :date AND 
+                      ((start_time <= :start_time AND end_time > :start_time) OR 
+                       (start_time < :end_time AND end_time >= :end_time) OR 
+                       (start_time >= :start_time AND end_time <= :end_time))';
+        }
         
         $stmt = $this->conn->prepare($query);
         
@@ -103,6 +113,76 @@ class Schedule {
         $stmt->execute();
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    // Tambahkan fungsi baru untuk mengecek konflik dengan jadwal tetap
+    public function check_fixed_schedule_conflicts($date, $start_time, $end_time, $is_urgent = false) {
+        // Jika urgent, langsung return array kosong (tidak ada konflik)
+        if ($is_urgent) {
+            return [];
+        }
+        
+        $conflicts = [];
+        $day_of_week = date('l', strtotime($date));
+        
+        // Check for TK & PAUD (Senin-Jumat, 08:00-12:00)
+        if (in_array($day_of_week, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'])) {
+            $tk_paud_start = '08:00:00';
+            $tk_paud_end = '12:00:00';
+            
+            if (
+                ($start_time <= $tk_paud_start && $end_time > $tk_paud_start) ||
+                ($start_time < $tk_paud_end && $end_time >= $tk_paud_end) ||
+                ($start_time >= $tk_paud_start && $end_time <= $tk_paud_end)
+            ) {
+                $conflicts[] = [
+                    'activity_type' => 'tk_paud',
+                    'title' => 'Kegiatan Belajar Mengajar TK & PAUD',
+                    'start_time' => $tk_paud_start,
+                    'end_time' => $tk_paud_end
+                ];
+            }
+        }
+        
+        // Check for Ibadah Doa (Sabtu, 18:00)
+        if ($day_of_week == 'Saturday') {
+            $doa_start = '18:00:00';
+            $doa_end = '20:00:00'; // Asumsi 2 jam
+            
+            if (
+                ($start_time <= $doa_start && $end_time > $doa_start) ||
+                ($start_time < $doa_end && $end_time >= $doa_end) ||
+                ($start_time >= $doa_start && $end_time <= $doa_end)
+            ) {
+                $conflicts[] = [
+                    'activity_type' => 'doa',
+                    'title' => 'Ibadah Doa',
+                    'start_time' => $doa_start,
+                    'end_time' => $doa_end
+                ];
+            }
+        }
+        
+        // Check for Ibadah Minggu (09:30)
+        if ($day_of_week == 'Sunday') {
+            $minggu_start = '09:30:00';
+            $minggu_end = '11:30:00'; // Asumsi 2 jam
+            
+            if (
+                ($start_time <= $minggu_start && $end_time > $minggu_start) ||
+                ($start_time < $minggu_end && $end_time >= $minggu_end) ||
+                ($start_time >= $minggu_start && $end_time <= $minggu_end)
+            ) {
+                $conflicts[] = [
+                    'activity_type' => 'minggu',
+                    'title' => 'Ibadah Minggu Pagi',
+                    'start_time' => $minggu_start,
+                    'end_time' => $minggu_end
+                ];
+            }
+        }
+        
+        return $conflicts;
     }
     
     // Delete schedule

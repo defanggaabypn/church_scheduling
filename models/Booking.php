@@ -12,7 +12,8 @@ class Booking {
     public $start_time;
     public $end_time;
     public $status;
-    public $rejection_reason; // Tambahkan property baru
+    public $rejection_reason;
+    public $is_urgent; // Tambahkan property baru
     public $created_at;
     
     public function __construct($db) {
@@ -28,7 +29,8 @@ class Booking {
                       description = :description, 
                       date = :date, 
                       start_time = :start_time, 
-                      end_time = :end_time';
+                      end_time = :end_time,
+                      is_urgent = :is_urgent'; // Tambahkan is_urgent
         
         $stmt = $this->conn->prepare($query);
         
@@ -40,6 +42,7 @@ class Booking {
         $this->date = htmlspecialchars(strip_tags($this->date));
         $this->start_time = htmlspecialchars(strip_tags($this->start_time));
         $this->end_time = htmlspecialchars(strip_tags($this->end_time));
+        $this->is_urgent = (int)$this->is_urgent; // Tambahkan ini
         
         // Bind data
         $stmt->bindParam(':user_id', $this->user_id);
@@ -49,6 +52,7 @@ class Booking {
         $stmt->bindParam(':date', $this->date);
         $stmt->bindParam(':start_time', $this->start_time);
         $stmt->bindParam(':end_time', $this->end_time);
+        $stmt->bindParam(':is_urgent', $this->is_urgent); // Tambahkan ini
         
         if($stmt->execute()) {
             return true;
@@ -108,7 +112,8 @@ class Booking {
             $this->start_time = $row['start_time'];
             $this->end_time = $row['end_time'];
             $this->status = $row['status'];
-            $this->rejection_reason = $row['rejection_reason'] ?? null; // Tambahkan ini
+            $this->rejection_reason = $row['rejection_reason'] ?? null;
+            $this->is_urgent = $row['is_urgent'] ?? 0; // Tambahkan ini
             $this->created_at = $row['created_at'];
             return true;
         }

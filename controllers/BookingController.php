@@ -42,6 +42,7 @@ class BookingController {
             'date' => trim($_POST['date']),
             'start_time' => trim($_POST['start_time']),
             'end_time' => trim($_POST['end_time']),
+            'is_urgent' => isset($_POST['is_urgent']) ? 1 : 0, // Tambahkan ini
             'activity_type_err' => '',
             'title_err' => '',
             'date_err' => '',
@@ -87,48 +88,31 @@ class BookingController {
         
         // Check for fixed schedules
         if(!empty($data['date'])) {
-            $day_of_week = date('l', strtotime($data['date']));
+            // Gunakan fungsi baru untuk cek konflik dengan jadwal tetap
+            $fixed_conflicts = $this->schedule->check_fixed_schedule_conflicts(
+                $data['date'], 
+                $data['start_time'], 
+                $data['end_time'],
+                $data['is_urgent'] // Pass is_urgent parameter
+            );
             
-            // Check for TK & PAUD (Monday-Friday, 08:00-12:00)
-            if(in_array($day_of_week, ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'])) {
-                $tk_paud_start = '08:00:00';
-                $tk_paud_end = '12:00:00';
-                
-                if(
-                    ($data['start_time'] <= $tk_paud_start && $data['end_time'] > $tk_paud_start) ||
-                    ($data['start_time'] < $tk_paud_end && $data['end_time'] >= $tk_paud_end) ||
-                    ($data['start_time'] >= $tk_paud_start && $data['end_time'] <= $tk_paud_end)
-                ) {
-                    $data['date_err'] = 'Jadwal bertabrakan dengan kegiatan TK & PAUD (08:00-12:00)';
-                }
+            if(!empty($fixed_conflicts) && !$data['is_urgent']) {
+                $conflict = $fixed_conflicts[0];
+                $data['date_err'] = 'Jadwal bertabrakan dengan ' . $conflict['title'] . ' (' . 
+                                    substr($conflict['start_time'], 0, 5) . '-' . 
+                                    substr($conflict['end_time'], 0, 5) . ')';
             }
             
-            // Check for Ibadah Doa (Saturday, 18:00)
-            if($day_of_week == 'Saturday') {
-                $doa_start = '18:00:00';
-                $doa_end = '20:00:00'; // Assuming 2 hours
-                
-                if(
-                    ($data['start_time'] <= $doa_start && $data['end_time'] > $doa_start) ||
-                    ($data['start_time'] < $doa_end && $data['end_time'] >= $doa_end) ||
-                    ($data['start_time'] >= $doa_start && $data['end_time'] <= $doa_end)
-                ) {
-                    $data['date_err'] = 'Jadwal bertabrakan dengan Ibadah Doa (18:00)';
-                }
-            }
+            // Check for other schedule conflicts
+            $conflicts = $this->schedule->check_conflicts(
+                $data['date'], 
+                $data['start_time'], 
+                $data['end_time'],
+                $data['is_urgent']
+            );
             
-            // Check for Ibadah Minggu (09:30)
-            if($day_of_week == 'Sunday') {
-                $minggu_start = '09:30:00';
-                $minggu_end = '11:30:00'; // Assuming 2 hours
-                
-                if(
-                    ($data['start_time'] <= $minggu_start && $data['end_time'] > $minggu_start) ||
-                    ($data['start_time'] < $minggu_end && $data['end_time'] >= $minggu_end) ||
-                    ($data['start_time'] >= $minggu_start && $data['end_time'] <= $minggu_end)
-                ) {
-                    $data['date_err'] = 'Jadwal bertabrakan dengan Ibadah Minggu Pagi (09:30)';
-                }
+            if(!empty($conflicts)) {
+                $data['date_err'] = 'Jadwal bertabrakan dengan kegiatan lain yang sudah terjadwal';
             }
         }
         
@@ -142,10 +126,15 @@ class BookingController {
             $this->booking->date = $data['date'];
             $this->booking->start_time = $data['start_time'];
             $this->booking->end_time = $data['end_time'];
+            $this->booking->is_urgent = $data['is_urgent']; // Tambahkan ini
             
             if($this->booking->create()) {
                 // Send notification to admin
-                create_notification('admin', 'Ada permohonan booking baru dari ' . $_SESSION['user_name']);
+                $notif_message = 'Ada permohonan booking baru dari ' . $_SESSION['user_name'];
+                if($data['is_urgent']) {
+                    $notif_message .= ' (URGENT)';
+                }
+                create_notification('admin', $notif_message);
                 
                 flash('booking_success', 'Permohonan booking berhasil diajukan');
                 redirect(BASE_URL . 'views/booking/list.php');
@@ -201,6 +190,7 @@ class BookingController {
                 'end_time' => $this->booking->end_time,
                 'status' => $this->booking->status,
                 'rejection_reason' => $this->booking->rejection_reason,
+                'is_urgent' => $this->booking->is_urgent, // Tambahkan ini
                 'created_at' => $this->booking->created_at
             ];
         } else {
@@ -285,7 +275,7 @@ class BookingController {
             redirect(BASE_URL . 'views/booking/list.php');
         }
         
-        // Only allow deletion if status is pending
+               // Only allow deletion if status is pending
         if($this->booking->status != 'pending') {
             flash('booking_message', 'Hanya booking dengan status pending yang dapat dihapus', 'alert alert-danger');
             redirect(BASE_URL . 'views/booking/list.php');
@@ -313,3 +303,4 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+

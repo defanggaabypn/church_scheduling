@@ -22,9 +22,57 @@ class ScheduleController {
     // Get all schedules
     public function getSchedules($start_date = null, $end_date = null) {
         if ($start_date && $end_date) {
-            return $this->schedule->read_by_date_range($start_date, $end_date);
+            $schedules = $this->schedule->read_by_date_range($start_date, $end_date);
+            
+            // Tambahkan informasi is_urgent ke dalam data jadwal
+            foreach ($schedules as &$schedule) {
+                // Jika ini adalah jadwal dari booking (bukan jadwal tetap)
+                if (!$schedule['is_fixed'] && isset($schedule['booking_id'])) {
+                    $booking_id = $schedule['booking_id'];
+                    // Ambil status urgent dari tabel bookings
+                    $query = "SELECT is_urgent FROM bookings WHERE id = :booking_id";
+                    $stmt = $this->db->prepare($query);
+                    $stmt->bindParam(':booking_id', $booking_id);
+                    $stmt->execute();
+                    
+                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                    if ($result && isset($result['is_urgent'])) {
+                        $schedule['is_urgent'] = (bool)$result['is_urgent'];
+                    } else {
+                        $schedule['is_urgent'] = false;
+                    }
+                } else {
+                    $schedule['is_urgent'] = false;
+                }
+            }
+            
+            return $schedules;
         } else {
-            return $this->schedule->read();
+            $schedules = $this->schedule->read();
+            
+            // Tambahkan informasi is_urgent ke dalam data jadwal
+            foreach ($schedules as &$schedule) {
+                // Jika ini adalah jadwal dari booking (bukan jadwal tetap)
+                if (!$schedule['is_fixed'] && isset($schedule['booking_id'])) {
+                    $booking_id = $schedule['booking_id'];
+                    // Ambil status urgent dari tabel bookings
+                    $query = "SELECT is_urgent FROM bookings WHERE id = :booking_id";
+                    $stmt = $this->db->prepare($query);
+                    $stmt->bindParam(':booking_id', $booking_id);
+                    $stmt->execute();
+                    
+                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                    if ($result && isset($result['is_urgent'])) {
+                        $schedule['is_urgent'] = (bool)$result['is_urgent'];
+                    } else {
+                        $schedule['is_urgent'] = false;
+                    }
+                } else {
+                    $schedule['is_urgent'] = false;
+                }
+            }
+            
+            return $schedules;
         }
     }
     
@@ -64,8 +112,13 @@ class ScheduleController {
         
         // Check for conflicts on each date
         foreach($bookings_by_date as $date => $day_bookings) {
-            // Sort by created_at to prioritize earlier bookings
+            // Sort by is_urgent first (urgent bookings get priority), then by created_at
             usort($day_bookings, function($a, $b) {
+                // Jika salah satu booking adalah urgent dan yang lain tidak
+                if (isset($a['is_urgent']) && isset($b['is_urgent']) && $a['is_urgent'] != $b['is_urgent']) {
+                    return $b['is_urgent'] - $a['is_urgent']; // Urgent booking comes first
+                }
+                // Jika keduanya sama-sama urgent atau sama-sama tidak urgent, urutkan berdasarkan created_at
                 return strtotime($a['created_at']) - strtotime($b['created_at']);
             });
             
@@ -80,6 +133,17 @@ class ScheduleController {
                         $booking1['start_time'], $booking1['end_time'],
                         $booking2['start_time'], $booking2['end_time']
                     )) {
+                        // Determine which booking gets priority
+                        $priority_booking = $booking1;
+                        $other_booking = $booking2;
+                        
+                        // If booking2 is urgent and booking1 is not, booking2 gets priority
+                        if (isset($booking2['is_urgent']) && $booking2['is_urgent'] && 
+                            (!isset($booking1['is_urgent']) || !$booking1['is_urgent'])) {
+                            $priority_booking = $booking2;
+                            $other_booking = $booking1;
+                        }
+                        
                         // Add to conflicts
                         $conflicts[] = [
                             'date' => $date,
@@ -87,18 +151,21 @@ class ScheduleController {
                                 'id' => $booking1['id'],
                                 'title' => $booking1['title'],
                                 'time' => date('H:i', strtotime($booking1['start_time'])) . ' - ' . date('H:i', strtotime($booking1['end_time'])),
-                                'created_at' => $booking1['created_at']
+                                'created_at' => $booking1['created_at'],
+                                'is_urgent' => isset($booking1['is_urgent']) ? $booking1['is_urgent'] : false
                             ],
                             'booking2' => [
                                 'id' => $booking2['id'],
                                 'title' => $booking2['title'],
                                 'time' => date('H:i', strtotime($booking2['start_time'])) . ' - ' . date('H:i', strtotime($booking2['end_time'])),
-                                'created_at' => $booking2['created_at']
+                                'created_at' => $booking2['created_at'],
+                                'is_urgent' => isset($booking2['is_urgent']) ? $booking2['is_urgent'] : false
                             ],
                             'recommendation' => [
-                                'id' => $booking1['id'], // Prioritaskan yang pertama diajukan
-                                'title' => $booking1['title'],
-                                'time' => date('H:i', strtotime($booking1['start_time'])) . ' - ' . date('H:i', strtotime($booking1['end_time']))
+                                'id' => $priority_booking['id'],
+                                'title' => $priority_booking['title'],
+                                'time' => date('H:i', strtotime($priority_booking['start_time'])) . ' - ' . date('H:i', strtotime($priority_booking['end_time'])),
+                                'is_urgent' => isset($priority_booking['is_urgent']) ? $priority_booking['is_urgent'] : false
                             ]
                         ];
                     }
@@ -142,9 +209,14 @@ class ScheduleController {
             $bookings_by_date[$date][] = $booking;
         }
         
-        // Sort each day's bookings by created_at (earliest first)
+        // Sort each day's bookings by is_urgent first, then by created_at
         foreach($bookings_by_date as $date => &$day_bookings) {
             usort($day_bookings, function($a, $b) {
+                // Jika salah satu booking adalah urgent dan yang lain tidak
+                if (isset($a['is_urgent']) && isset($b['is_urgent']) && $a['is_urgent'] != $b['is_urgent']) {
+                    return $b['is_urgent'] - $a['is_urgent']; // Urgent booking comes first
+                }
+                // Jika keduanya sama-sama urgent atau sama-sama tidak urgent, urutkan berdasarkan created_at
                 return strtotime($a['created_at']) - strtotime($b['created_at']);
             });
         }
@@ -170,11 +242,24 @@ class ScheduleController {
                     $booking['start_time'], $booking['end_time'],
                     $existing_booking['start_time'], $existing_booking['end_time']
                 )) {
-                    // Check which booking was created first
-                    if(strtotime($booking['created_at']) > strtotime($existing_booking['created_at'])) {
-                        // Current booking was created later, so it has conflict
+                    // Check if current booking is urgent and existing is not
+                    $current_is_urgent = isset($booking['is_urgent']) && $booking['is_urgent'];
+                    $existing_is_urgent = isset($existing_booking['is_urgent']) && $existing_booking['is_urgent'];
+                    
+                    if ($current_is_urgent && !$existing_is_urgent) {
+                        // Current booking is urgent but existing is not, so no conflict
+                        continue;
+                    } else if (!$current_is_urgent && $existing_is_urgent) {
+                        // Current booking is not urgent but existing is, so there's a conflict
                         $has_conflict = true;
                         break;
+                    } else {
+                        // Both are urgent or both are not urgent, check created_at
+                        if(strtotime($booking['created_at']) > strtotime($existing_booking['created_at'])) {
+                            // Current booking was created later, so it has conflict
+                            $has_conflict = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -192,11 +277,24 @@ class ScheduleController {
                         $booking['start_time'], $booking['end_time'],
                         $existing_booking['start_time'], $existing_booking['end_time']
                     )) {
-                        // Check which booking was created first
-                        if(strtotime($booking['created_at']) > strtotime($existing_booking['created_at'])) {
-                            // Current booking was created later, so it has conflict
+                        // Check if current booking is urgent and existing is not
+                        $current_is_urgent = isset($booking['is_urgent']) && $booking['is_urgent'];
+                        $existing_is_urgent = isset($existing_booking['is_urgent']) && $existing_booking['is_urgent'];
+                        
+                        if ($current_is_urgent && !$existing_is_urgent) {
+                            // Current booking is urgent but existing is not, so no conflict
+                            continue;
+                        } else if (!$current_is_urgent && $existing_is_urgent) {
+                            // Current booking is not urgent but existing is, so there's a conflict
                             $has_conflict = true;
                             break;
+                        } else {
+                            // Both are urgent or both are not urgent, check created_at
+                            if(strtotime($booking['created_at']) > strtotime($existing_booking['created_at'])) {
+                                // Current booking was created later, so it has conflict
+                                $has_conflict = true;
+                                break;
+                            }
                         }
                     }
                 }

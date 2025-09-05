@@ -28,7 +28,7 @@ if($status_filter) {
         <a href="manage_bookings.php" class="btn btn-outline-primary <?php echo !$status_filter ? 'active' : ''; ?>">Semua</a>
         <a href="manage_bookings.php?status=pending" class="btn btn-outline-warning <?php echo $status_filter == 'pending' ? 'active' : ''; ?>">Menunggu</a>
         <a href="manage_bookings.php?status=approved" class="btn btn-outline-success <?php echo $status_filter == 'approved' ? 'active' : ''; ?>">Disetujui</a>
-                <a href="manage_bookings.php?status=rejected" class="btn btn-outline-danger <?php echo $status_filter == 'rejected' ? 'active' : ''; ?>">Ditolak</a>
+        <a href="manage_bookings.php?status=rejected" class="btn btn-outline-danger <?php echo $status_filter == 'rejected' ? 'active' : ''; ?>">Ditolak</a>
     </div>
 </div>
 
@@ -45,6 +45,7 @@ if($status_filter) {
                     <th>Tanggal</th>
                     <th>Waktu</th>
                     <th>Status</th>
+                    <th>Urgent</th> <!-- Tambahkan kolom untuk status urgent -->
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -85,6 +86,13 @@ if($status_filter) {
                                 <span class="badge badge-success">Disetujui</span>
                             <?php elseif($booking['status'] == 'rejected') : ?>
                                 <span class="badge badge-danger">Ditolak</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php if(isset($booking['is_urgent']) && $booking['is_urgent']) : ?>
+                                <span class="badge badge-danger">URGENT</span>
+                            <?php else : ?>
+                                <span class="badge badge-secondary">Normal</span>
                             <?php endif; ?>
                         </td>
                         <td>
@@ -145,4 +153,3 @@ if($status_filter) {
 <?php endforeach; ?>
 
 <?php include_once '../templates/footer.php'; ?>
-

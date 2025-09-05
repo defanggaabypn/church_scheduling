@@ -86,13 +86,16 @@ $schedule_conflicts = $schedule_controller->checkScheduleConflicts($start_date, 
             <button type="submit" class="btn btn-primary">Tampilkan</button>
         </form>
     </div>
-    <div class="col-md-6 text-right">
+<div class="col-md-6 mb-3 mb-md-0">
+    <div class="d-flex justify-content-start justify-content-md-end">
         <form method="post">
             <input type="hidden" name="start_date" value="<?php echo $start_date; ?>">
             <input type="hidden" name="end_date" value="<?php echo $end_date; ?>">
             <button type="submit" name="optimize" class="btn btn-success">Jalankan Optimasi</button>
         </form>
     </div>
+</div>
+
 </div>
 
 <div class="card">

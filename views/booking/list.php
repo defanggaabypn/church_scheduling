@@ -37,6 +37,7 @@ $bookings = $booking_controller->getBookings();
                     <th>Tanggal</th>
                     <th>Waktu</th>
                     <th>Status</th>
+                    <th>Urgent</th> <!-- Tambahkan kolom untuk status urgent -->
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -76,6 +77,13 @@ $bookings = $booking_controller->getBookings();
                                 <span class="badge badge-success">Disetujui</span>
                             <?php elseif($booking['status'] == 'rejected') : ?>
                                 <span class="badge badge-danger">Ditolak</span>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php if(isset($booking['is_urgent']) && $booking['is_urgent']) : ?>
+                                <span class="badge badge-danger">URGENT</span>
+                            <?php else : ?>
+                                <span class="badge badge-secondary">Normal</span>
                             <?php endif; ?>
                         </td>
                         <td>

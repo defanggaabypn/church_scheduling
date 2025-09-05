@@ -66,12 +66,22 @@ include_once ROOT_PATH . '/views/templates/header.php';
             </div>
         </div>
         
+        <!-- Tambahkan checkbox untuk menandai booking sebagai urgent -->
+        <div class="form-group">
+            <div class="form-check">
+                <input type="checkbox" name="is_urgent" id="is_urgent" class="form-check-input" value="1" <?php echo (isset($data['is_urgent']) && $data['is_urgent']) ? 'checked' : ''; ?>>
+                <label class="form-check-label" for="is_urgent">Tandai sebagai <strong>URGENT</strong></label>
+            </div>
+            <small class="form-text text-muted">Permintaan urgent dapat mengajukan booking meskipun bertabrakan dengan jadwal tetap, namun tetap memerlukan persetujuan admin.</small>
+        </div>
+        
         <div class="alert alert-info">
             <strong>Perhatian:</strong>
             <ul>
                 <li>Permintaan kegiatan wajib diajukan minimal 1 minggu sebelum kegiatan berlangsung.</li>
-                <li>Permintaan tidak dapat diajukan untuk jadwal tetap (TK & PAUD, Ibadah Doa, Ibadah Minggu).</li>
+                <li>Permintaan tidak dapat diajukan untuk jadwal tetap (TK & PAUD, Ibadah Doa, Ibadah Minggu) kecuali ditandai sebagai URGENT.</li>
                 <li>Jika ada jadwal yang bertabrakan, gedung akan digunakan untuk kegiatan yang pertama kali mengajukan permohonan.</li>
+                <li>Permintaan URGENT akan ditinjau khusus oleh admin dan dapat disetujui meskipun bertabrakan dengan jadwal tetap.</li>
             </ul>
         </div>
         

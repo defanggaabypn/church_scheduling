@@ -20,8 +20,11 @@ $booking = $booking_controller->getBooking($_GET['id']);
 <div class="row">
     <div class="col-md-8 mx-auto">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h3>Detail Booking</h3>
+                <?php if(isset($booking['is_urgent']) && $booking['is_urgent']) : ?>
+                    <span class="badge badge-danger">URGENT</span>
+                <?php endif; ?>
             </div>
             <div class="card-body">
                 <h4 class="card-title"><?php echo $booking['title']; ?></h4>
@@ -93,6 +96,19 @@ $booking = $booking_controller->getBooking($_GET['id']);
                     <div class="col-md-8"><?php echo date('d-m-Y H:i', strtotime($booking['created_at'])); ?></div>
                 </div>
                 
+                <!-- Tambahkan baris untuk menampilkan status urgent -->
+                <div class="row mb-3">
+                    <div class="col-md-4 font-weight-bold">Status Prioritas:</div>
+                    <div class="col-md-8">
+                        <?php if(isset($booking['is_urgent']) && $booking['is_urgent']) : ?>
+                            <span class="badge badge-danger">URGENT</span>
+                            <small class="text-muted ml-2">Booking ini memiliki prioritas tinggi dan dapat dipertimbangkan meskipun bertabrakan dengan jadwal tetap.</small>
+                        <?php else : ?>
+                            <span class="badge badge-secondary">Normal</span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                
                 <?php if($_SESSION['user_role'] == 'admin' && $booking['status'] == 'pending') : ?>
                     <hr>
                     <div class="row">
@@ -113,7 +129,7 @@ $booking = $booking_controller->getBooking($_GET['id']);
             <div class="card-footer">
                 <a href="list.php" class="btn btn-secondary">Kembali</a>
                 
-                <?php if($booking['status'] == 'pending') : ?>
+                <?php if($booking['status'] == 'pending' && ($_SESSION['user_role'] == 'admin' || $_SESSION['user_id'] == $booking['user_id'])) : ?>
                     <form class="d-inline float-right" action="<?php echo BASE_URL; ?>controllers/BookingController.php" method="post">
                         <input type="hidden" name="id" value="<?php echo $booking['id']; ?>">
                         <button type="submit" name="delete_booking" class="btn btn-danger" onclick="return confirm('Anda yakin ingin menghapus booking ini?')">Hapus</button>
